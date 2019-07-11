@@ -66,9 +66,9 @@ ENV ADMIN_USER=admin@shinobi.video \
 # Create additional directories for: Custom configuration, working directory, database directory, scripts
 RUN mkdir -p \
         /config \
-        /customAutoLoad \
         /opt/shinobi \
         /var/lib/mysql
+RUN mkdir -p /customAutoLoad
 
 # Assign working directory
 WORKDIR /opt/shinobi
