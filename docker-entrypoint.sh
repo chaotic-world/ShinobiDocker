@@ -1,10 +1,19 @@
 #!/bin/sh
 set -e
+sudo su
+# Update Shinobi to latest version on container start?
+if [ "$APP_UPDATE" = "auto" ]; then
+    echo "Checking for Shinobi updates ..."
+    git reset --hard
+    git pull
+    npm install --unsafe-perm
+    npm audit fix --force
+fi
+
 # Copy existing custom configuration files
 echo "Copy custom configuration files ..."
 if [ -d /config ]; then
-    cp "/config/conf.json" /opt/shinobi/conf.json || echo "No custom config files found. Using default..."
-    cp "/config/super.json" /opt/shinobi/super.json || echo "No custom superuser credential files found. Using default..."
+    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found."
 else
     echo "Folder /config doesn't exist - not copying custom config files"
 fi
@@ -20,21 +29,32 @@ if [ ! -f /opt/shinobi/super.json ]; then
     cp /opt/shinobi/super.sample.json /opt/shinobi/super.json
 fi
 
+if [ ! -f /opt/shinobi/plugins/motion/conf.json ]; then
+    echo "Create default config file /opt/shinobi/plugins/motion/conf.json ..."
+    cp /opt/shinobi/plugins/motion/conf.sample.json /opt/shinobi/plugins/motion/conf.json
+fi
+
 # Hash the admins password
 if [ -n "${ADMIN_PASSWORD}" ]; then
     echo "Hash admin password ..."
     ADMIN_PASSWORD_MD5=$(echo -n "${ADMIN_PASSWORD}" | md5sum | sed -e 's/  -$//')
 fi
+
 echo "MariaDB Directory ..."
-ls /var/lib/mysql
+DB_DATA_PATH="/var/lib/mysql"
+DB_ROOT_PASS="${MYSQL_ROOT_PASSWORD}"
+DB_USER="${MYSQL_USER}"
+DB_PASS="${MYSQL_PASSWORD}"
+MAX_ALLOWED_PACKET="200M"
 
 if [ ! -f /var/lib/mysql/ibdata1 ]; then
     echo "Installing MariaDB ..."
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql --silent
+    mysql_install_db --user=mysql --datadir=${DB_DATA_PATH} --silent
 fi
+
 echo "Starting MariaDB ..."
 /usr/bin/mysqld_safe --user=mysql &
-sleep 5s
+sleep 10s
 
 chown -R mysql /var/lib/mysql
 
@@ -57,17 +77,17 @@ FLUSH PRIVILEGES ;
 EOSQL
 fi
 
-# Create MySQL database if it does not exists
+# Waiting for connection to MariaDB server
 if [ -n "${MYSQL_HOST}" ]; then
-    echo "Wait for MySQL server" ...
+    echo -n "Waiting for connection to MariaDB server on $MYSQL_HOST ."
     while ! mysqladmin ping -h"$MYSQL_HOST"; do
         sleep 1
+        echo -n "."
     done
+    echo " established."
 fi
 
-
-echo "Setting up MySQL database if it does not exists ..."
-
+# Create MariaDB database if it does not exists
 echo "Create database schema if it does not exists ..."
 mysql -e "source /opt/shinobi/sql/framework.sql" || true
 
@@ -77,7 +97,6 @@ mysql -e "source /opt/shinobi/sql/user.sql" || true
 
 echo "Set keys for CRON and PLUGINS from environment variables ..."
 sed -i -e 's/"key":"73ffd716-16ab-40f4-8c2e-aecbd3bc1d30"/"key":"'"${CRON_KEY}"'"/g' \
-       -e 's/"Motion":"d4b5feb4-8f9c-4b91-bfec-277c641fc5e3"/"Motion":"'"${PLUGINKEY_MOTION}"'"/g' \
        -e 's/"OpenCV":"644bb8aa-8066-44b6-955a-073e6a745c74"/"OpenCV":"'"${PLUGINKEY_OPENCV}"'"/g' \
        -e 's/"OpenALPR":"9973e390-f6cd-44a4-86d7-954df863cea0"/"OpenALPR":"'"${PLUGINKEY_OPENALPR}"'"/g' \
        "/opt/shinobi/conf.json"
@@ -94,16 +113,17 @@ fi
 # Change the uid/gid of the node user
 if [ -n "${GID}" ]; then
     if [ -n "${UID}" ]; then
+        echo " - Set the uid:gid of the node user to ${UID}:${GID}"
         groupmod -g ${GID} node && usermod -u ${UID} -g ${GID} node
     fi
 fi
 
+# Modify Shinobi configuration
+echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
-node tools/modifyConfiguration.js cpuUsageMarker=CPU
-echo "Getting Latest Shinobi Master ..."
-git reset --hard
-git pull
-npm install
+echo "  - Set cpuUsageMarker ..."
+node tools/modifyConfiguration.js cpuUsageMarker="Cpu(s)"
+
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
