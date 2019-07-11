@@ -138,8 +138,8 @@ RUN set -ex; \
 RUN sed -ie "s/^bind-address\s*=\s*127\.0\.0\.1$/#bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
 # Install Shinobi app including NodeJS dependencies
-RUN git clone -b ${APP_BRANCH} https://gitlab.com/Shinobi-Systems/Shinobi.git ./ShinobiPro
-COPY ./ShinobiPro/ ./
+RUN git clone -b ${APP_BRANCH} https://gitlab.com/Shinobi-Systems/Shinobi.git /opt/shinobi
+
 
 RUN npm i npm@latest -g && \
     npm install pm2 -g && \
