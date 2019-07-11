@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+# link customAutoLoad
+ln -s "/opt/shinobi/libs/customAutoLoad" "/customAutoLoad"
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."

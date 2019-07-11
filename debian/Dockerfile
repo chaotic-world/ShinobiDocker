@@ -69,6 +69,7 @@ ENV ADMIN_USER=admin@shinobi.video \
 # Create additional directories for: Custom configuration, working directory, database directory, scripts
 RUN mkdir -p \
         /config \
+        /customAutoLoad \
         /opt/shinobi \
         /var/lib/mysql
 
@@ -160,6 +161,7 @@ COPY ./config/conf.json ./config/super.json /config/
 
 VOLUME ["/opt/shinobi/videos"]
 VOLUME ["/config"]
+VOLUME ["/customAutoLoad"]
 VOLUME ["/var/lib/mysql"]
 
 EXPOSE 8080
