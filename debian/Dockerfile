@@ -36,7 +36,7 @@ LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     org.label-schema.vcs-ref=${ARG_APP_COMMIT} \
     org.label-schema.vcs-type="Git" \
     org.label-schema.vcs-url="https://gitlab.com/moeiscool/ShinobiDocker.git" \
-    maintainer="MiGoller" \
+    maintainer="MiGoller,moeiscool" \
     Author="MiGoller, mrproper, pschmitt & moeiscool"
 
 # Persist app-reladted build arguments
