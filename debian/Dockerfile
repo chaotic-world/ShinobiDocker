@@ -21,9 +21,6 @@ ARG ARG_APP_UPDATE=auto
 # Build data
 ARG ARG_BUILD_DATE
 
-# ShinobiPro branch, defaults to master
-ARG ARG_APP_BRANCH=master
-
 # Basic build-time metadata as defined at http://label-schema.org
 LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     org.label-schema.docker.dockerfile="/Dockerfile" \
@@ -39,7 +36,7 @@ LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     maintainer="MiGoller,moeiscool" \
     Author="MiGoller, mrproper, pschmitt & moeiscool"
 
-# Persist app-reladted build arguments
+# Persist app-related build arguments
 ENV APP_VERSION=$ARG_APP_VERSION \
     APP_CHANNEL=$ARG_APP_CHANNEL \
     APP_COMMIT=$ARG_APP_COMMIT \

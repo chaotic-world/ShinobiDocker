@@ -5,6 +5,7 @@ ln -s "/opt/shinobi/libs/customAutoLoad" "/customAutoLoad"
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."
+    git checkout $APP_BRANCH
     git reset --hard
     git pull
     npm install --unsafe-perm
