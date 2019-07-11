@@ -80,7 +80,7 @@ RUN mkdir -p \
 WORKDIR /opt/shinobi
 
 # Install Shinobi app including NodeJS dependencies
-COPY ./ShinobiPro/ ./
+RUN git clone -b ${APP_BRANCH} https://gitlab.com/Shinobi-Systems/Shinobi.git /opt/shinobi
 
 RUN npm install jsonfile && \
     npm install sqlite3 && \
