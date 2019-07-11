@@ -5,7 +5,7 @@ FROM node:8
 
 # Build arguments ...
 # Shinobi's version information
-ARG ARG_APP_VERSION 
+ARG ARG_APP_VERSION
 
 # The channel or branch triggering the build.
 ARG ARG_APP_CHANNEL
@@ -28,14 +28,14 @@ ARG ARG_APP_BRANCH=master
 LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="GPLv3" \
-    org.label-schema.name="MiGoller" \
-    org.label-schema.vendor="MiGoller" \
+    org.label-schema.name="MiGoller,moeiscool" \
+    org.label-schema.vendor="Shinobi Systems" \
     org.label-schema.version="${ARG_APP_VERSION}-${ARG_APP_BRANCH}" \
     org.label-schema.description="Shinobi Pro - The Next Generation in Open-Source Video Management Software" \
-    org.label-schema.url="https://gitlab.com/users/MiGoller/projects" \
+    org.label-schema.url="https://gitlab.com/moeiscool/ShinobiDocker" \
     org.label-schema.vcs-ref=${ARG_APP_COMMIT} \
     org.label-schema.vcs-type="Git" \
-    org.label-schema.vcs-url="https://gitlab.com/MiGoller/ShinobiDocker.git" \
+    org.label-schema.vcs-url="https://gitlab.com/moeiscool/ShinobiDocker.git" \
     maintainer="MiGoller" \
     Author="MiGoller, mrproper, pschmitt & moeiscool"
 
@@ -58,13 +58,13 @@ ENV ADMIN_USER=admin@shinobi.video \
     PLUGINKEY_MOTION=b7502fd9-506c-4dda-9b56-8e699a6bc41c \
     PLUGINKEY_OPENCV=f078bcfe-c39a-4eb5-bd52-9382ca828e8a \
     PLUGINKEY_OPENALPR=dbff574e-9d4a-44c1-b578-3dc0f1944a3c \
-    #leave these ENVs alone unless you know what you are doing 
+    #leave these ENVs alone unless you know what you are doing
     MYSQL_USER=majesticflame \
     MYSQL_PASSWORD=password \
     MYSQL_HOST=localhost \
     MYSQL_DATABASE=ccio \
     MYSQL_ROOT_PASSWORD=blubsblawoot \
-    MYSQL_ROOT_USER=root 
+    MYSQL_ROOT_USER=root
 
 # Create additional directories for: Custom configuration, working directory, database directory, scripts
 RUN mkdir -p \
@@ -81,28 +81,28 @@ RUN export DEBIAN_FRONTEND="noninteractive"
 # Install package dependencies
 RUN apt-get update && \
     apt-get install -y \
-        libfreetype6-dev \ 
-        libgnutls28-dev \ 
-        libmp3lame-dev \ 
-        libass-dev \ 
-        libogg-dev \ 
-        libtheora-dev \ 
-        libvorbis-dev \ 
-        libvpx-dev \ 
-        libwebp-dev \ 
-        libssh2-1-dev \ 
-        libopus-dev \ 
-        librtmp-dev \ 
-        libx264-dev \ 
-        libx265-dev \ 
+        libfreetype6-dev \
+        libgnutls28-dev \
+        libmp3lame-dev \
+        libass-dev \
+        libogg-dev \
+        libtheora-dev \
+        libvorbis-dev \
+        libvpx-dev \
+        libwebp-dev \
+        libssh2-1-dev \
+        libopus-dev \
+        librtmp-dev \
+        libx264-dev \
+        libx265-dev \
         yasm && \
     apt-get install -y \
-        build-essential \ 
-        bzip2 \ 
-        coreutils \ 
-        gnutls-bin \ 
-        nasm \ 
-        tar \ 
+        build-essential \
+        bzip2 \
+        coreutils \
+        gnutls-bin \
+        nasm \
+        tar \
         x264
 
 # Install additional packages
@@ -117,6 +117,7 @@ RUN apt-get install -y \
         python \
         wget \
         tar \
+        sudo \
         xz-utils
 
 # Install MariaDB server... the debian way
@@ -137,6 +138,7 @@ RUN set -ex; \
 RUN sed -ie "s/^bind-address\s*=\s*127\.0\.0\.1$/#bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
 # Install Shinobi app including NodeJS dependencies
+git clone -b ${APP_BRANCH} https://gitlab.com/Shinobi-Systems/Shinobi.git ./ShinobiPro
 COPY ./ShinobiPro/ ./
 
 RUN npm i npm@latest -g && \

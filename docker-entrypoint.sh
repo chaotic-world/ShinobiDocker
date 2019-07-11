@@ -1,12 +1,12 @@
 #!/bin/sh
 set -e
-
+sudo su
 # Copy existing custom configuration files
 echo "Copy custom configuration files ..."
 if [ -d /config ]; then
-    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found." 
+    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found."
 else
-    echo "Folder /config doesn't exist - not copying custom config files" 
+    echo "Folder /config doesn't exist - not copying custom config files"
 fi
 
 # Create default configurations files from samples if not existing
@@ -44,7 +44,7 @@ sleep 5s
 chown -R mysql /var/lib/mysql
 
 if [ ! -f /var/lib/mysql/ibdata1 ]; then
-    mysql -u root --password="" <<-EOSQL
+    mysql -u root --password="${DB_PASS}" <<-EOSQL
 SET @@SESSION.SQL_LOG_BIN=0;
 USE mysql;
 DELETE FROM mysql.user ;
