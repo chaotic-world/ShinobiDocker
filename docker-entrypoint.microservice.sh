@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+
 sudo su
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
