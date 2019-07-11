@@ -1,11 +1,11 @@
 #
 # Builds a custom docker image for ShinobiCCTV Pro
 #
-FROM node:8
+FROM node:8-alpine 
 
 # Build arguments ...
 # Shinobi's version information
-ARG ARG_APP_VERSION
+ARG ARG_APP_VERSION 
 
 # The channel or branch triggering the build.
 ARG ARG_APP_CHANNEL
@@ -28,15 +28,15 @@ ARG ARG_APP_BRANCH=master
 LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="GPLv3" \
-    org.label-schema.name="MiGoller,moeiscool" \
-    org.label-schema.vendor="Shinobi Systems" \
+    org.label-schema.name="MiGoller" \
+    org.label-schema.vendor="MiGoller" \
     org.label-schema.version="${ARG_APP_VERSION}-${ARG_APP_BRANCH}" \
     org.label-schema.description="Shinobi Pro - The Next Generation in Open-Source Video Management Software" \
-    org.label-schema.url="https://gitlab.com/moeiscool/ShinobiDocker" \
+    org.label-schema.url="https://gitlab.com/users/MiGoller/projects" \
     org.label-schema.vcs-ref=${ARG_APP_COMMIT} \
     org.label-schema.vcs-type="Git" \
-    org.label-schema.vcs-url="https://gitlab.com/moeiscool/ShinobiDocker.git" \
-    maintainer="MiGoller,moeiscool" \
+    org.label-schema.vcs-url="https://gitlab.com/MiGoller/ShinobiDocker.git" \
+    maintainer="MiGoller" \
     Author="MiGoller, mrproper, pschmitt & moeiscool"
 
 # Persist app-reladted build arguments
@@ -64,7 +64,8 @@ ENV ADMIN_USER=admin@shinobi.video \
     MYSQL_HOST=localhost \
     MYSQL_DATABASE=ccio \
     MYSQL_ROOT_PASSWORD=blubsblawoot \
-    MYSQL_ROOT_USER=root
+    MYSQL_ROOT_USER=root 
+
 
 # Create additional directories for: Custom configuration, working directory, database directory, scripts
 RUN mkdir -p \
@@ -75,71 +76,53 @@ RUN mkdir -p \
 # Assign working directory
 WORKDIR /opt/shinobi
 
-RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
-RUN export DEBIAN_FRONTEND="noninteractive"
-
 # Install package dependencies
-RUN apt-get update && \
-    apt-get install -y \
-        libfreetype6-dev \
-        libgnutls28-dev \
-        libmp3lame-dev \
-        libass-dev \
-        libogg-dev \
-        libtheora-dev \
-        libvorbis-dev \
-        libvpx-dev \
-        libwebp-dev \
-        libssh2-1-dev \
-        libopus-dev \
-        librtmp-dev \
-        libx264-dev \
-        libx265-dev \
-        yasm && \
-    apt-get install -y \
-        build-essential \
-        bzip2 \
-        coreutils \
-        gnutls-bin \
-        nasm \
-        tar \
+RUN apk update && \
+    apk add --no-cache \ 
+        freetype-dev \ 
+        gnutls-dev \ 
+        lame-dev \ 
+        libass-dev \ 
+        libogg-dev \ 
+        libtheora-dev \ 
+        libvorbis-dev \ 
+        libvpx-dev \ 
+        libwebp-dev \ 
+        libssh2 \ 
+        opus-dev \ 
+        rtmpdump-dev \ 
+        x264-dev \ 
+        x265-dev \ 
+        yasm-dev && \
+    apk add --no-cache --virtual \ 
+        .build-dependencies \ 
+        build-base \ 
+        bzip2 \ 
+        coreutils \ 
+        gnutls \ 
+        nasm \ 
+        tar \ 
         x264
 
-# Install additional packages
-
-RUN apt-get install -y \
+RUN apk update && \
+    apk add --no-cache \
         ffmpeg \
         git \
         make \
+        mariadb \
         mariadb-client \
         openrc \
-        pkg-config \
+        pkgconfig \
         python \
         wget \
         tar \
-        sudo \
-        xz-utils
+        xz
 
-# Install MariaDB server... the debian way
-RUN set -ex; \
-	{ \
-		echo "mariadb-server" mysql-server/root_password password '${MYSQL_ROOT_PASSWORD}'; \
-		echo "mariadb-server" mysql-server/root_password_again password '${MYSQL_ROOT_PASSWORD}'; \
-	} | debconf-set-selections; \
-	apt-get update; \
-	apt-get install -y \
-		"mariadb-server" \
-        socat \
-	; \
-    find /etc/mysql/ -name '*.cnf' -print0 \
-		| xargs -0 grep -lZE '^(bind-address|log)' \
-		| xargs -rt -0 sed -Ei 's/^(bind-address|log)/#&/'
-
-RUN sed -ie "s/^bind-address\s*=\s*127\.0\.0\.1$/#bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+RUN sed -ie "s/^bind-address\s*=\s*127\.0\.0\.1$/#bind-address = 0.0.0.0/" /etc/my.cnf.d/mariadb-server.cnf && \
+    sed -ie "s/^skip-networking$/#skip-networking/" /etc/my.cnf.d/mariadb-server.cnf
 
 # Install Shinobi app including NodeJS dependencies
-RUN git clone -b ${APP_BRANCH} https://gitlab.com/Shinobi-Systems/Shinobi.git /opt/shinobi
-
+COPY ./ShinobiPro/ ./
 
 RUN npm i npm@latest -g && \
     npm install pm2 -g && \
@@ -150,7 +133,7 @@ RUN npm i npm@latest -g && \
     npm audit fix --force
 
 # Copy code
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
+COPY docker-entrypoint.migoller.sh ./docker-entrypoint.sh
 COPY pm2Shinobi.yml ./
 COPY /tools/modifyJson.js ./tools
 RUN chmod -f +x ./*.sh
