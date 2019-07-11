@@ -119,7 +119,7 @@ fi
 echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
 echo "  - Set cpuUsageMarker ..."
-node tools/modifyConfiguration.js cpuUsageMarker="Cpu(s)"
+node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
 
 # Execute Command
 echo "Starting Shinobi ..."
