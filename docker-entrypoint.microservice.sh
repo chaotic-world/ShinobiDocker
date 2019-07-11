@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-
+sudo su
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."
@@ -12,7 +12,10 @@ fi
 # Copy existing custom configuration files
 echo "Copy custom configuration files ..."
 if [ -d /config ]; then
-    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found." 
+    cp "/config/conf.json" /opt/shinobi/conf.json || echo "No custom config files found. Using default..."
+    cp "/config/super.json" /opt/shinobi/super.json || echo "No custom superuser credential files found. Using default..."
+else
+    echo "Folder /config doesn't exist - not copying custom config files"
 fi
 
 # Create default configurations files from samples if not existing
@@ -24,11 +27,6 @@ fi
 if [ ! -f /opt/shinobi/super.json ]; then
     echo "Create default config file /opt/shinobi/super.json ..."
     cp /opt/shinobi/super.sample.json /opt/shinobi/super.json
-fi
-
-if [ ! -f /opt/shinobi/plugins/motion/conf.json ]; then
-    echo "Create default config file /opt/shinobi/plugins/motion/conf.json ..."
-    cp /opt/shinobi/plugins/motion/conf.sample.json /opt/shinobi/plugins/motion/conf.json
 fi
 
 # Use embedded SQLite3 database ?
@@ -65,7 +63,7 @@ else
                 echo " - Set database name: ${MYSQL_DATABASE}"
                 sed -i  -e "s/ccio/${MYSQL_DATABASE}/g" \
                     "./sql_temp/framework.sql"
-                
+
                 sed -i  -e "s/ccio/${MYSQL_DATABASE}/g" \
                     "./sql_temp/user.sql"
 
@@ -171,12 +169,12 @@ if [ -n "${ADMIN_USER}" ]; then
                 # MD5 hashing - unsecure!
                 ADMIN_PASSWORD_HASH=$(echo -n "${ADMIN_PASSWORD}" | md5sum | sed -e 's/  -$//')
                 ;;
-            
+
             sha256)
                 # SHA256 hashing
                 ADMIN_PASSWORD_HASH=$(echo -n "${ADMIN_PASSWORD}" | sha256sum | sed -e 's/  -$//')
                 ;;
-            
+
             sha512)
                 # SHA512 hashing with salting
                 ADMIN_PASSWORD_HASH=$(echo -n "${ADMIN_PASSWORD}" | sha512sum | sed -e 's/  -$//')
