@@ -212,4 +212,6 @@ node tools/modifyConfiguration.js cpuUsageMarker=CPU
 
 # Execute Command
 echo "Starting Shinobi ..."
+pm2 start camera.js
+pm2 start cron.js
 exec "$@"
