@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-sudo su
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."
@@ -12,11 +11,9 @@ fi
 
 # Copy existing custom configuration files
 echo "Copy custom configuration files ..."
-if [ -d /config ]; then
-    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found."
-else
-    echo "Folder /config doesn't exist - not copying custom config files"
-fi
+cp "/config/conf.json" /opt/shinobi/conf.json || echo "No custom config files found. Using default..."
+cp "/config/super.json" /opt/shinobi/super.json || echo "No custom superuser credential files found. Using default..."
+
 
 # Create default configurations files from samples if not existing
 if [ ! -f /opt/shinobi/conf.json ]; then
@@ -55,7 +52,7 @@ fi
 echo "Starting MariaDB ..."
 /usr/bin/mysqld_safe --user=mysql &
 sleep 10s
-
+service mysql start
 chown -R mysql /var/lib/mysql
 
 if [ ! -f /var/lib/mysql/ibdata1 ]; then

@@ -39,6 +39,7 @@ if [ "${EMBEDDEDDB}" = "true" ] || [ "${EMBEDDEDDB}" = "TRUE" ]; then
     fi
 else
     # Create MariaDB database if it does not exists
+    service mysql start
     if [ -n "${MYSQL_HOST}" ]; then
         echo -n "Waiting for connection to MariaDB server on $MYSQL_HOST ."
         while ! mysqladmin ping -h"$MYSQL_HOST"; do
@@ -47,7 +48,6 @@ else
         done
         echo " established."
     fi
-
     # Create MariaDB database if it does not exists
     if [ -n "${MYSQL_ROOT_USER}" ]; then
         if [ -n "${MYSQL_ROOT_PASSWORD}" ]; then
@@ -206,10 +206,8 @@ fi
 echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
 echo "  - Set cpuUsageMarker ..."
-node tools/modifyConfiguration.js cpuUsageMarker=CPU
+node tools/modifyConfiguration.js cpuUsageMarker="Cpu(s)"
 
 # Execute Command
 echo "Starting Shinobi ..."
-pm2 start camera.js
-pm2 start cron.js
 exec "$@"
