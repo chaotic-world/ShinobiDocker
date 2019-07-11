@@ -150,6 +150,7 @@ RUN npm i npm@latest -g && \
     npm audit fix --force
 
 # Copy code
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
 COPY pm2Shinobi.yml ./
 COPY /tools/modifyJson.js ./tools
 RUN chmod -f +x ./*.sh
