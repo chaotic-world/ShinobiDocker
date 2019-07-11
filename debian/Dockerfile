@@ -156,7 +156,7 @@ COPY /tools/modifyJson.js ./tools
 RUN chmod -f +x ./*.sh
 
 # Copy default configuration files
-COPY ./config/conf.json ./config/super.json /opt/shinobi/
+COPY ./config/conf.json ./config/super.json /config
 
 VOLUME ["/opt/shinobi/videos"]
 VOLUME ["/config"]
