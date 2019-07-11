@@ -11,30 +11,30 @@ WORKDIR /tmp/workdir
 RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
 
 # Install package dependencies
-RUN apt-get update && \ 
+RUN apt-get update && \
     apt-get install -y \
-        libfreetype6-dev \ 
-        libgnutls28-dev \ 
-        libmp3lame-dev \ 
-        libass-dev \ 
-        libogg-dev \ 
-        libtheora-dev \ 
-        libvorbis-dev \ 
-        libvpx-dev \ 
-        libwebp-dev \ 
-        libssh2-1-dev \ 
-        libopus-dev \ 
-        librtmp-dev \ 
-        libx264-dev \ 
-        libx265-dev \ 
+        libfreetype6-dev \
+        libgnutls28-dev \
+        libmp3lame-dev \
+        libass-dev \
+        libogg-dev \
+        libtheora-dev \
+        libvorbis-dev \
+        libvpx-dev \
+        libwebp-dev \
+        libssh2-1-dev \
+        libopus-dev \
+        librtmp-dev \
+        libx264-dev \
+        libx265-dev \
         yasm && \
     apt-get install -y \
-        build-essential \ 
-        bzip2 \ 
-        coreutils \ 
-        gnutls-bin \ 
-        nasm \ 
-        tar \ 
+        build-essential \
+        bzip2 \
+        coreutils \
+        gnutls-bin \
+        nasm \
+        tar \
         x264
 
 # Install additional packages
@@ -50,6 +50,7 @@ RUN apt-get install -y \
         sqlite \
         wget \
         tar \
+        sudo \
         xz-utils
 
 RUN npm i npm@latest -g && \
@@ -97,7 +98,7 @@ FROM base AS release
 
 # Build arguments ...
 # Shinobi's version information
-ARG ARG_APP_VERSION 
+ARG ARG_APP_VERSION
 
 # The channel or branch triggering the build.
 ARG ARG_APP_CHANNEL
@@ -108,7 +109,7 @@ ARG ARG_APP_COMMIT
 # Update Shinobi on every container start?
 #   manual:     Update Shinobi manually. New Docker images will always retrieve the latest version.
 #   auto:       Update Shinobi on every container start.
-ARG ARG_APP_UPDATE=manual
+ARG ARG_APP_UPDATE=auto
 
 # Build data
 ARG ARG_BUILD_DATE
@@ -120,15 +121,15 @@ ARG ARG_APP_BRANCH=master
 LABEL org.label-schema.build-date=${ARG_BUILD_DATE} \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="GPLv3" \
-    org.label-schema.name="MiGoller" \
-    org.label-schema.vendor="MiGoller" \
-    org.label-schema.version=${ARG_APP_VERSION} \
+    org.label-schema.name="MiGoller,moeiscool" \
+    org.label-schema.vendor="Shinobi Systems" \
+    org.label-schema.version="${ARG_APP_VERSION}-${ARG_APP_BRANCH}" \
     org.label-schema.description="Shinobi Pro - The Next Generation in Open-Source Video Management Software" \
-    org.label-schema.url="https://gitlab.com/users/MiGoller/projects" \
+    org.label-schema.url="https://gitlab.com/moeiscool/ShinobiDocker" \
     org.label-schema.vcs-ref=${ARG_APP_COMMIT} \
     org.label-schema.vcs-type="Git" \
-    org.label-schema.vcs-url="https://gitlab.com/MiGoller/ShinobiDocker.git" \
-    maintainer="MiGoller" \
+    org.label-schema.vcs-url="https://gitlab.com/moeiscool/ShinobiDocker.git" \
+    maintainer="MiGoller,moeiscool" \
     Author="MiGoller, mrproper, pschmitt & moeiscool"
 
 # Persist app-reladted build arguments
