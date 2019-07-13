@@ -41,7 +41,6 @@ ENV APP_VERSION=$ARG_APP_VERSION \
     APP_CHANNEL=$ARG_APP_CHANNEL \
     APP_COMMIT=$ARG_APP_COMMIT \
     APP_UPDATE=$ARG_APP_UPDATE \
-    APP_PORT=$ARG_APP_PORT \
     APP_BRANCH=${ARG_APP_BRANCH}
 
 # Set environment variables to default values
@@ -52,6 +51,7 @@ ENV APP_VERSION=$ARG_APP_VERSION \
 # PLUGINKEY_OPENALPR : openalpr plugin connection key
 ENV ADMIN_USER=admin@shinobi.video \
     ADMIN_PASSWORD=admin \
+    APP_PORT=8080 \
     CRON_KEY=fd6c7849-904d-47ea-922b-5143358ba0de \
     PLUGINKEY_MOTION=b7502fd9-506c-4dda-9b56-8e699a6bc41c \
     PLUGINKEY_OPENCV=f078bcfe-c39a-4eb5-bd52-9382ca828e8a \
