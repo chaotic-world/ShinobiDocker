@@ -123,7 +123,9 @@ echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
 echo "  - Set cpuUsageMarker ..."
 node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
-
+if [ -n "${APP_PORT}" ]; then
+    node tools/modifyConfiguration.js port=${APP_PORT}
+fi
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
