@@ -4,7 +4,7 @@
 FROM ubuntu:bionic
 RUN apt update -y
 RUN apt install wget -y
-RUN wget https://deb.nodesource.com/setup_8.x
+RUN wget https://deb.nodesource.com/setup_9.x
 RUN chmod +x setup_9.x
 RUN ./setup_9.x
 RUN apt install nodejs -y
