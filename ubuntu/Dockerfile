@@ -2,6 +2,7 @@
 # Builds a custom docker image for ShinobiCCTV Pro
 #
 FROM ubuntu:bionic
+RUN apt update -y
 RUN apt install wget -y
 RUN wget https://deb.nodesource.com/setup_8.x
 RUN chmod +x setup_9.x
@@ -83,8 +84,7 @@ RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-bac
 RUN export DEBIAN_FRONTEND="noninteractive"
 
 # Install package dependencies
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt-get install -y \
         libfreetype6-dev \
         libgnutls28-dev \
         libmp3lame-dev \
