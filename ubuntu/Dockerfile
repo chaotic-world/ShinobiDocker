@@ -116,7 +116,6 @@ RUN apt-get install -y \
         git \
         make \
         mariadb-client \
-        openrc \
         pkg-config \
         python \
         wget \
