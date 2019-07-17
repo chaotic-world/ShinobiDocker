@@ -2,6 +2,7 @@
 set -e
 # link customAutoLoad
 ln -s "/customAutoLoad" "/opt/shinobi/libs/" || true
+chmod -R 777 /opt/shinobi/libs/customAutoLoad
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."
