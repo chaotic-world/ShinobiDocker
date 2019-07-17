@@ -126,6 +126,13 @@ node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
 if [ -n "${APP_PORT}" ]; then
     node tools/modifyConfiguration.js port=${APP_PORT}
 fi
+if [ -n "${APP_ADD_TO_CONFIG}" ]; then
+    node tools/modifyConfiguration.js addToConfig=`${APP_ADD_TO_CONFIG}`
+fi
+if [ -n "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}" ]; then
+    node tools/downloadCustomAutoLoadModule.js `${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}`
+fi
+
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
