@@ -127,6 +127,7 @@ node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
 if [ -n "${APP_PORT}" ]; then
     node tools/modifyConfiguration.js port=${APP_PORT}
 fi
+node tools/downloadCustomAutoLoadModule.js "PlateRecognizer"
 if [ -n "${PLATERECOGNIZER_KEY}" ]; then
     node tools/modifyConfiguration.js plateRecognizerLicenseKey='${PLATERECOGNIZER_KEY}'
 fi
