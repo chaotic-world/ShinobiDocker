@@ -147,7 +147,6 @@ RUN npm i npm@latest -g && \
     npm install jsonfile && \
     npm install edit-json-file && \
     npm install ffbinaries && \
-    npm install async && \
     npm install --unsafe-perm && \
     npm audit fix --force
 

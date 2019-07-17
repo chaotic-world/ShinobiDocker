@@ -122,6 +122,9 @@ fi
 # Modify Shinobi configuration
 echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
+npm install async
+npm install --unsafe-perm
+npm audit fix --force
 echo "  - Set cpuUsageMarker ..."
 node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
 if [ -n "${APP_PORT}" ]; then
