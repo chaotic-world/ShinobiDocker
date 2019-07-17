@@ -141,7 +141,8 @@ if [ -n "${PLATERECOGNIZER_ENDPOINT}" ]; then
     node tools/modifyConfiguration.js plateRecognizerApiEndpoint="${PLATERECOGNIZER_ENDPOINT}"
 fi
 cd /opt/shinobi/libs/customAutoLoad/PlateRecognizer
-npm install
+npm install async
+npm install request
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
