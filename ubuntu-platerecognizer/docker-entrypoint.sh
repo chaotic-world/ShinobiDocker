@@ -122,12 +122,16 @@ fi
 # Modify Shinobi configuration
 echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
-npm install async
-npm install --unsafe-perm
 echo "  - Set cpuUsageMarker ..."
 node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
 if [ -n "${APP_PORT}" ]; then
     node tools/modifyConfiguration.js port=${APP_PORT}
+fi
+if [ -n "${APP_ADD_TO_CONFIG}" ]; then
+    node tools/modifyConfiguration.js addToConfig='${APP_ADD_TO_CONFIG}'
+fi
+if [ -n "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}" ]; then
+    node tools/downloadCustomAutoLoadModule.js "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}"
 fi
 node tools/downloadCustomAutoLoadModule.js "PlateRecognizer"
 if [ -n "${PLATERECOGNIZER_KEY}" ]; then
@@ -136,13 +140,8 @@ fi
 if [ -n "${PLATERECOGNIZER_ENDPOINT}" ]; then
     node tools/modifyConfiguration.js plateRecognizerApiEndpoint='${PLATERECOGNIZER_ENDPOINT}'
 fi
-if [ -n "${APP_ADD_TO_CONFIG}" ]; then
-    node tools/modifyConfiguration.js addToConfig='${APP_ADD_TO_CONFIG}'
-fi
-if [ -n "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}" ]; then
-    node tools/downloadCustomAutoLoadModule.js "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}"
-fi
-
+cd /opt/shinobi/libs/customAutoLoad/PlateRecognizer
+npm install
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
