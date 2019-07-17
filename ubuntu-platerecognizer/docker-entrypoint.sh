@@ -135,10 +135,10 @@ if [ -n "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}" ]; then
 fi
 node tools/downloadCustomAutoLoadModule.js "PlateRecognizer"
 if [ -n "${PLATERECOGNIZER_KEY}" ]; then
-    node tools/modifyConfiguration.js plateRecognizerLicenseKey='${PLATERECOGNIZER_KEY}'
+    node tools/modifyConfiguration.js plateRecognizerLicenseKey="${PLATERECOGNIZER_KEY}"
 fi
 if [ -n "${PLATERECOGNIZER_ENDPOINT}" ]; then
-    node tools/modifyConfiguration.js plateRecognizerApiEndpoint='${PLATERECOGNIZER_ENDPOINT}'
+    node tools/modifyConfiguration.js plateRecognizerApiEndpoint="${PLATERECOGNIZER_ENDPOINT}"
 fi
 cd /opt/shinobi/libs/customAutoLoad/PlateRecognizer
 npm install
