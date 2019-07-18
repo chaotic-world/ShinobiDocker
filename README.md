@@ -1,8 +1,9 @@
-# Shinobi CCTV on Docker
+# Shinobi by Shinobi Systems for Docker
+#### ShinobiCCTV, ShinobiNVR, ShinobiVMS
 
 Built on MiGoller's Docker image.
 
-### How to Install
+## How to Install
 
 1. Just do it.
 
@@ -19,7 +20,7 @@ docker run -d \
  'shinobisystems/shinobi:latest-ubuntu'
 ```
 
-### Docker Command Breakdown
+## Docker Command Breakdown
 
 | Command Flag | Value | Description |
 |--------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
