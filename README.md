@@ -7,18 +7,24 @@ Built on MiGoller's Docker image.
 
 1. Just do it.
 
-```
-docker run -d \
---name='Shinobi' \
- -e 'APP_BRANCH=dev' \
- -p '8080:8080/tcp' \
- -v "/dev/shm/shinobiStreams":'/dev/shm/streams':'rw' \
- -v "$HOME/shinobiConfig":'/config':'rw' \
- -v "$HOME/shinobiCustomAutoLoad":'/customAutoLoad':'rw' \
- -v "$HOME/shinobiDatabase":'/var/lib/mysql':'rw' \
- -v "$HOME/shinobiVideos":'/shinobi/videos':'rw' \
- 'shinobisystems/shinobi:latest-ubuntu'
-```
+    ```
+    docker run -d \
+    --name='Shinobi' \
+     -e 'APP_BRANCH=dev' \
+     -p '8080:8080/tcp' \
+     -v "/dev/shm/shinobiStreams":'/dev/shm/streams':'rw' \
+     -v "$HOME/shinobiConfig":'/config':'rw' \
+     -v "$HOME/shinobiCustomAutoLoad":'/customAutoLoad':'rw' \
+     -v "$HOME/shinobiDatabase":'/var/lib/mysql':'rw' \
+     -v "$HOME/shinobiVideos":'/opt/shinobi/videos':'rw' \
+     'shinobisystems/shinobi:latest-ubuntu'
+    ```
+
+    One liner compact.
+
+    ```
+    docker run -d --name=Shinobi -e APP_BRANCH=dev -p 8080:8080/tcp -v "/dev/shm/shinobiStreams":/dev/shm/streams:rw -v "$HOME/shinobiConfig":/config:rw -v "$HOME/shinobiCustomAutoLoad":/customAutoLoad:rw -v "$HOME/shinobiDatabase":/var/lib/mysql:rw -v "$HOME/shinobiVideos":/opt/shinobi/videos:rw shinobisystems/shinobi:latest-ubuntu
+     ```
 
 ## Docker Command Breakdown
 
@@ -31,4 +37,4 @@ docker run -d \
 |  | "$HOME/shinobiConfig":'/config':'rw' | Volume Map for custom configuration files. |
 | -v | "$HOME/shinobiCustomAutoLoad":'/customAutoLoad':'rw' | Volume Map for Shinobi customAutoLoad modules. |
 | -v | "$HOME/shinobiDatabase":'/var/lib/mysql':'rw' | Volume Map for Database information. User, Monitor, Logs, etc. |
-| -v | "$HOME/shinobiVideos":'/shinobi/videos':'rw' | Volume Map for Video file storage. |
+| -v | "$HOME/shinobiVideos":'/opt/shinobi/videos':'rw' | Volume Map for Video file storage. |

@@ -52,13 +52,18 @@ ENV APP_VERSION=$ARG_APP_VERSION \
 # Set environment variables to default values
 # ADMIN_USER : the super user login name
 # ADMIN_PASSWORD : the super user login password
-
-ENV PLATERECOGNIZER_KEY=GETONLINE \
-    PLATERECOGNIZER_ENDPOINT=https://api.platerecognizer.com/v1/plate-reader \
-    ADMIN_USER=admin@shinobi.video \
+# PLUGINKEY_MOTION : motion plugin connection key
+# PLUGINKEY_OPENCV : opencv plugin connection key
+# PLUGINKEY_OPENALPR : openalpr plugin connection key
+ENV ADMIN_USER=admin@shinobi.video \
     ADMIN_PASSWORD=admin \
     APP_PORT=8080 \
     CRON_KEY=fd6c7849-904d-47ea-922b-5143358ba0de \
+    PLUGINKEY_YOLO=Yolo123123 \
+    PLUGIN_YOLO_ENABLED=NO \
+    PLUGINKEY_MOTION=b7502fd9-506c-4dda-9b56-8e699a6bc41c \
+    PLUGINKEY_OPENCV=f078bcfe-c39a-4eb5-bd52-9382ca828e8a \
+    PLUGINKEY_OPENALPR=dbff574e-9d4a-44c1-b578-3dc0f1944a3c \
     #leave these ENVs alone unless you know what you are doing
     MYSQL_USER=majesticflame \
     MYSQL_PASSWORD=password \
@@ -149,7 +154,7 @@ RUN npm i npm@latest -g && \
     npm audit fix --force
 
 # Copy code
-COPY ubuntu-platerecognizer/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
 COPY pm2Shinobi.yml ./
 COPY /tools/modifyJson.js ./tools
 RUN chmod -f +x ./*.sh
