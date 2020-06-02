@@ -1,19 +1,23 @@
 #!/bin/sh
 set -e
-
+# link customAutoLoad
+ln -s "/customAutoLoad" "/opt/shinobi/libs/" || true
+chmod -R 777 /opt/shinobi/libs/customAutoLoad
 # Update Shinobi to latest version on container start?
 if [ "$APP_UPDATE" = "auto" ]; then
     echo "Checking for Shinobi updates ..."
+    git checkout "${APP_BRANCH}"
     git reset --hard
     git pull
-    npm install
+    npm install --unsafe-perm
+    npm audit fix --force
 fi
 
 # Copy existing custom configuration files
 echo "Copy custom configuration files ..."
-if [ -d /config ]; then
-    cp -R -f "/config/"* /opt/shinobi || echo "No custom config files found." 
-fi
+cp "/config/conf.json" /opt/shinobi/conf.json || echo "No custom config files found. Using default..."
+cp "/config/super.json" /opt/shinobi/super.json || echo "No custom superuser credential files found. Using default..."
+
 
 # Create default configurations files from samples if not existing
 if [ ! -f /opt/shinobi/conf.json ]; then
@@ -52,11 +56,11 @@ fi
 echo "Starting MariaDB ..."
 /usr/bin/mysqld_safe --user=mysql &
 sleep 10s
-
+service mysql start
 chown -R mysql /var/lib/mysql
 
 if [ ! -f /var/lib/mysql/ibdata1 ]; then
-    mysql -u root --password="" <<-EOSQL
+    mysql -u root --password="${DB_PASS}" <<-EOSQL
 SET @@SESSION.SQL_LOG_BIN=0;
 USE mysql;
 DELETE FROM mysql.user ;
@@ -94,7 +98,6 @@ mysql -e "source /opt/shinobi/sql/user.sql" || true
 
 echo "Set keys for CRON and PLUGINS from environment variables ..."
 sed -i -e 's/"key":"73ffd716-16ab-40f4-8c2e-aecbd3bc1d30"/"key":"'"${CRON_KEY}"'"/g' \
-       -e 's/"Motion":"d4b5feb4-8f9c-4b91-bfec-277c641fc5e3"/"Motion":"'"${PLUGINKEY_MOTION}"'"/g' \
        -e 's/"OpenCV":"644bb8aa-8066-44b6-955a-073e6a745c74"/"OpenCV":"'"${PLUGINKEY_OPENCV}"'"/g' \
        -e 's/"OpenALPR":"9973e390-f6cd-44a4-86d7-954df863cea0"/"OpenALPR":"'"${PLUGINKEY_OPENALPR}"'"/g' \
        "/opt/shinobi/conf.json"
@@ -120,8 +123,26 @@ fi
 echo "- Chimp Shinobi's technical configuration ..."
 cd /opt/shinobi
 echo "  - Set cpuUsageMarker ..."
-node tools/modifyConfiguration.js cpuUsageMarker=CPU
-
+node tools/modifyConfiguration.js cpuUsageMarker="%Cpu(s)"
+if [ -n "${APP_PORT}" ]; then
+    node tools/modifyConfiguration.js port=${APP_PORT}
+fi
+if [ -n "${APP_ADD_TO_CONFIG}" ]; then
+    node tools/modifyConfiguration.js addToConfig='${APP_ADD_TO_CONFIG}'
+fi
+if [ -n "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}" ]; then
+    node tools/downloadCustomAutoLoadModule.js "${DOWNLOAD_CUSTOMAUTOLOAD_SAMPLES}"
+fi
+node tools/downloadCustomAutoLoadModule.js "PlateRecognizer"
+if [ -n "${PLATERECOGNIZER_KEY}" ]; then
+    node tools/modifyConfiguration.js plateRecognizerLicenseKey="${PLATERECOGNIZER_KEY}"
+fi
+if [ -n "${PLATERECOGNIZER_ENDPOINT}" ]; then
+    node tools/modifyConfiguration.js plateRecognizerApiEndpoint="${PLATERECOGNIZER_ENDPOINT}"
+fi
+cd /opt/shinobi/libs/customAutoLoad/PlateRecognizer
+npm install
+cd /opt/shinobi
 # Execute Command
 echo "Starting Shinobi ..."
 exec "$@"
