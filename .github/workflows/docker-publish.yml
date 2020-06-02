@@ -15,7 +15,7 @@ on:
 
 env:
   # TODO: Change variable to your image's name.
-  IMAGE_NAME: ShinobiDocker-latest-ubuntu-node11
+  IMAGE_NAME: latest-ubuntu-node11
 
 jobs:
   # Run tests.
